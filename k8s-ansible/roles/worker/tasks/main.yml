@@ -1,0 +1,14 @@
+---
+- name: Check if kubelet.conf exists (to determine if reset is needed)
+  ansible.builtin.stat:
+    path: /etc/kubernetes/kubelet.conf
+  register: kubelet_conf_stat
+
+- name: Reset cluster if it's already joined
+  ansible.builtin.command: kubeadm reset -f
+  when: kubelet_conf_stat.stat.exists
+
+- name: Join worker nodes to the cluster
+  ansible.builtin.command: "{{ hostvars[groups['control_plane'][0]]['join_command'] }}"
+  args:
+    creates: /etc/kubernetes/kubelet.conf

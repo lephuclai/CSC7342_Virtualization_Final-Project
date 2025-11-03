@@ -1,0 +1,15 @@
+---
+- name: Run common tasks on all nodes
+  hosts: all
+  roles:
+    - common
+
+- name: Set up the control plane
+  hosts: control_plane
+  roles:
+    - control-plane
+
+- name: Set up the worker nodes
+  hosts: workers
+  roles:
+    - worker
